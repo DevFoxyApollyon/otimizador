@@ -1,0 +1,9 @@
+# Versões antigas renomeadas durante a compilação
+dist/*.antigo.exe
+dist/*.old*.exe
+*.pdb
+
+# Relatórios, logs e backups gerados pelo programa (dados da máquina, nunca publicar)
+*.html
+melhorias-log.txt
+backups/
