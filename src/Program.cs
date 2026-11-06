@@ -36,7 +36,8 @@ namespace PcDiagnostico
                 Console.WriteLine("  --saida <pasta>       pasta do relatório (padrão: Documentos\\Diagnóstico do PC)");
                 Console.WriteLine("  --corrigir            correção automática das falhas seguras (confirmação única, pede administrador)");
                 Console.WriteLine("  --otimizar            otimização máxima (correção automática + desempenho; pede administrador)");
-                Console.WriteLine("  --desinstalar         desinstalar aplicativos escolhidos (pede administrador)");
+                Console.WriteLine("  --desinstalar         desinstalar aplicativos escolhidos e limpar as sobras (pede administrador)");
+                Console.WriteLine("  --drivers             atualizar drivers pelo Windows Update, escolhendo cada um (pede administrador)");
                 Console.WriteLine("  --travando            mede agora o que está travando o PC e se ele precisa reiniciar");
                 Console.WriteLine("  --melhorias           abre direto o modo de melhorias (pede administrador)");
                 Console.WriteLine("  --verificacao-rapida  roda a verificação rápida do Microsoft Defender (após confirmar)");
@@ -48,6 +49,7 @@ namespace PcDiagnostico
             if (tem("--corrigir")) { Correcao.Executar(simular); Pausa(semPausa); return 0; }
             if (tem("--otimizar")) { Correcao.Executar(simular, true); Pausa(semPausa); return 0; }
             if (tem("--desfazer")) { Backup.Desfazer(simular); Pausa(semPausa); return 0; }
+            if (tem("--drivers")) { Drivers.Executar(simular); Pausa(semPausa); return 0; }
             if (tem("--desinstalar")) { Desinstalador.Executar(simular); Pausa(semPausa); return 0; }
             if (tem("--travando")) { Travamento.Imprimir(Travamento.Medir(5)); Reinicio.Perguntar(simular); Pausa(semPausa); return 0; }
             if (tem("--melhorias")) { Melhorias.ModoInterativo(simular); Pausa(semPausa); return 0; }
@@ -155,12 +157,13 @@ namespace PcDiagnostico
                 Console.WriteLine("   [5] Corrigir automaticamente (todas as correções seguras, com uma confirmação)");
                 Console.WriteLine("   [6] Ver peças para trocar ou melhorar (upgrade)");
                 Console.WriteLine("   [7] Ver o passo a passo para corrigir cada problema");
-                Console.WriteLine("   [8] Desinstalar aplicativos (" + d.Apps.Count(a => a.Recomendacao != Recomendacao.Manter) + " sugeridos — você escolhe cada um)");
+                Console.WriteLine("   [8] Desinstalar aplicativos (" + d.Apps.Count(a => a.Recomendacao != Recomendacao.Manter) + " sugeridos — você escolhe cada um; limpa as sobras)");
                 Console2.Cor(ConsoleColor.Green, "   [9] OTIMIZAÇÃO MÁXIMA (a melhor otimização possível, com uma confirmação)");
                 Console.WriteLine("   [10] O que está travando o PC agora (medir de novo)");
                 Console.WriteLine("   [11] Reiniciar o PC por completo" + (d.MotivosReinicio.Count > 0 ? " (recomendado)" : ""));
                 Console.WriteLine("   [12] Desfazer otimização (restaurar o backup salvo antes)");
                 Console.WriteLine("   [13] Desligar o PC por completo (sem Inicialização Rápida)");
+                Console.WriteLine("   [14] Atualizar drivers pelo Windows Update (você escolhe e confirma cada um)");
                 Console.WriteLine("   [0] Sair");
                 string r = Console2.Ler("  Opção: ");
                 if (r == null || r == "0" || r == "") return;
@@ -177,6 +180,7 @@ namespace PcDiagnostico
                 else if (r == "11") { if (Console2.Confirmar("Reiniciar POR COMPLETO agora? (salve seus arquivos; reinicia em 30 segundos)")) Reinicio.ReiniciarCompleto(simular); }
                 else if (r == "12") Backup.Desfazer(simular);
                 else if (r == "13") Reinicio.DesligarCompleto(simular);
+                else if (r == "14") Drivers.Executar(simular);
             }
         }
 
