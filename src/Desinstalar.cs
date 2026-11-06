@@ -124,15 +124,16 @@ namespace PcDiagnostico
                 if (!Console2.Confirmar("Continuar SEM ponto de restauração? (não recomendado)")) { log.Linha("Cancelado: sem ponto de restauração."); return; }
             }
             int ok = 0, falha = 0, pendente = 0;
+            var removidos = new List<AppInstalado>();
             foreach (var a in escolhidos)
             {
                 Console2.Cor(ConsoleColor.Cyan, "\n  > Desinstalando " + a.Nome);
-                if (simular) { log.Linha("Executaria: " + a.ComandoDesinstalar); ok++; continue; }
+                if (simular) { log.Linha("Executaria: " + a.ComandoDesinstalar); ok++; removidos.Add(a); continue; }
                 int c;
                 try { c = Rodar(a); }
                 catch (Exception ex) { log.Linha("Falha ao iniciar o desinstalador de " + a.Nome + ": " + ex.Message); falha++; continue; }
                 System.Threading.Thread.Sleep(2000);
-                if (!AindaInstalado(a)) { ok++; log.Linha("[REMOVIDO] " + a.Nome + " (código " + c + ")."); }
+                if (!AindaInstalado(a)) { ok++; removidos.Add(a); log.Linha("[REMOVIDO] " + a.Nome + " (código " + c + ")."); }
                 else if (c == 0 || c == 3010 || c == 1641)
                 {
                     pendente++;
@@ -141,6 +142,7 @@ namespace PcDiagnostico
                 else { falha++; log.Linha("[FALHOU] " + a.Nome + " (código " + c + "). Tente por Configurações > Aplicativos > Aplicativos instalados."); }
             }
             log.Linha("Resumo: " + ok + (simular ? " seriam removidos, " : " removidos, ") + pendente + " para verificar, " + falha + " falharam.");
+            Sobras.Limpar(removidos.Where(x => x.Tipo != "Microsoft Store").ToList(), d.Apps.Except(removidos).ToList(), log);
             Console2.Cor(ConsoleColor.Green, "\n  Log: " + log.Arquivo);
             Reinicio.Perguntar(simular);
         }

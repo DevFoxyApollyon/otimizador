@@ -44,9 +44,10 @@ Gravidades: **Crítico** (vermelho), **Aviso** (laranja), **Informação** (azul
    - **[5]** Corrigir automaticamente (todas as correções seguras de uma vez, com uma única confirmação)
    - **[6]** Ver as peças para trocar ou melhorar, com exemplos de modelos melhores, passo a passo e preço estimado
    - **[7]** Ver o passo a passo para corrigir cada problema crítico ou aviso
-   - **[8]** Desinstalar aplicativos: mostra os recomendados para remover e os opcionais (ou **T** para todos). Você escolhe pelos números e confirma cada um. Antes é criado um ponto de restauração. Usa o desinstalador do próprio programa (MSI em modo `/passive`, apps da Store com `Remove-AppxPackage`), confere se o app realmente saiu e registra tudo no log. Componentes, drivers e runtimes recebem um aviso extra.
+   - **[8]** Desinstalar aplicativos: mostra os recomendados para remover e os opcionais (ou **T** para todos). Você escolhe pelos números e confirma cada um. Antes é criado um ponto de restauração. Usa o desinstalador do próprio programa (MSI em modo `/passive`, apps da Store com `Remove-AppxPackage`), confere se o app realmente saiu e registra tudo no log. Componentes, drivers e runtimes recebem um aviso extra. Depois, procura **sobras** dos programas removidos (pasta de instalação e pastas/chaves de registro com o nome exato do programa em Arquivos de Programas, ProgramData e AppData) e remove só as que você escolher: pastas vão para a Lixeira e chaves de registro são exportadas para `.reg` em `Documentos\Diagnóstico do PC\backup-registro\` antes. Pastas usadas por outro programa instalado, ou por outra versão do mesmo programa, nunca entram na lista.
    - **[9]** **Otimização máxima**: tudo da correção automática, mais o plano Alto desempenho (em PC de mesa), efeitos visuais para desempenho, Modo de Jogo ligado e gravação em segundo plano do Xbox (Game DVR) desligada. Tem uma única confirmação, ponto de restauração e log. O XMP da memória continua manual, porque fica na BIOS.
    - **[10]** O que está travando o PC agora: mede por 5 segundos o uso de CPU, RAM e disco por programa, mostra os programas que não respondem e dá o passo a passo de cada causa.
+   - **[14]** Atualizar drivers pelo **Windows Update** (drivers assinados e testados pela Microsoft; nada de sites de terceiros). Lista os drivers disponíveis, você escolhe e confirma cada um, é criado um ponto de restauração antes e tudo vai para o log. Para a placa de vídeo, o driver mais novo costuma estar no site da NVIDIA/AMD/Intel.
    - **[11]** Reiniciar o PC (sempre pede confirmação; reinicia em 30 s e pode ser cancelado com `shutdown /a`).
 
 No topo do relatório e no console aparecem também:
@@ -126,7 +127,8 @@ PCDiagnostico.exe [opções]
   --saida <pasta>       pasta do relatório
   --corrigir            correção automática (confirmação única, pede administrador)
   --otimizar            otimização máxima (confirmação única, pede administrador)
-  --desinstalar         desinstalar aplicativos escolhidos (pede administrador)
+  --desinstalar         desinstalar aplicativos escolhidos e limpar as sobras (pede administrador)
+  --drivers             atualizar drivers pelo Windows Update, escolhendo cada um (pede administrador)
   --travando            mede o que está travando o PC agora e se precisa reiniciar
   --melhorias           abre direto o modo de melhorias (pede administrador)
   --verificacao-rapida  verificação rápida do Defender (após confirmar)
@@ -167,6 +169,8 @@ pc-diagnostico/
 │  ├─ Melhorias.cs            modo de melhorias, ponto de restauração, log, Defender, relatórios powercfg
 │  ├─ Correcao.cs             correção automática e otimização máxima (confirmação única + resumo final)
 │  ├─ Desinstalar.cs          desinstalação de aplicativos item por item
+│  ├─ Sobras.cs               limpeza de sobras após desinstalar (Lixeira + backup .reg)
+│  ├─ Drivers.cs              atualização de drivers pelo Windows Update
 │  ├─ Travamento.cs           o que está travando o PC (CPU/RAM/disco por programa) e se precisa reiniciar
 │  ├─ Relatorio.cs            HTML autocontido (offline, tema claro/escuro, filtros, tabela de apps)
 │  ├─ Nativo.cs               chamadas nativas (assinatura, Lixeira, processos), itens de inicialização

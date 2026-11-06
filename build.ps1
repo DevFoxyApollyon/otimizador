@@ -13,7 +13,7 @@ $fontes = Get-ChildItem (Join-Path $raiz 'src') -Filter *.cs | ForEach-Object { 
 & $csc /nologo /target:exe /platform:anycpu /optimize+ /codepage:65001 `
     "/out:$saida" "/win32manifest:$(Join-Path $raiz 'app.manifest')" `
     /reference:System.Management.dll /reference:System.Core.dll /reference:Microsoft.CSharp.dll `
-    /reference:System.ServiceProcess.dll /reference:System.DirectoryServices.AccountManagement.dll /reference:System.Web.Extensions.dll /reference:System.Xml.Linq.dll `
+    /reference:System.ServiceProcess.dll /reference:System.DirectoryServices.AccountManagement.dll /reference:System.Web.Extensions.dll /reference:System.Xml.Linq.dll /reference:Microsoft.VisualBasic.dll `
     $fontes
 if ($LASTEXITCODE -ne 0) { throw "Falha na compilação (código $LASTEXITCODE)." }
 Write-Host "OK: $saida ($([math]::Round((Get-Item $saida).Length / 1KB)) KB)"
